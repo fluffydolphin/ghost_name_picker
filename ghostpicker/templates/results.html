@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Choose a phantom name{% endblock %}
+
+{% block content %}
+<h1>Choose one</h1>
+<p>These names stay on this page until you pick one or go back and draw again.</p>
+{% if error %}
+<p class="form-error" role="alert">{{ error }}</p>
+{% endif %}
+{% if selectable %}
+<form method="post" action="{{ url_for('results') }}">
+  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  <fieldset>
+    <legend>Possible phantom names</legend>
+    {% for option in options %}
+    <label class="choice{% if option.taken %} taken{% endif %}">
+      <input type="radio" name="ghost_name" value="{{ option.name }}" {% if option.taken %} disabled{% else %}
+        required{% endif %}>
+      <span>
+        <span class="choice-name">{{ option.label }}</span>
+        {% if option.taken %}
+        <span class="quiet">Just taken</span>
+        {% elif option.description %}
+        <span class="choice-copy">{{ option.description }}</span>
+        {% else %}
+        <span class="quiet">No description was listed for this name.</span>
+        {% endif %}
+      </span>
+    </label>
+    {% endfor %}
+  </fieldset>
+  <button type="submit">Use this phantom name</button>
+</form>
+{% else %}
+<p>None of these names are still available.</p>
+{% endif %}
+<p class="actions"><a href="{{ url_for('pick') }}">Draw again</a></p>
+{% endblock %}

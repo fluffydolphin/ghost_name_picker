@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Ghost Name Picker{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('favicon') }}" type="image/png">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="masthead">
+    <div class="brand">
+      <p class="eyebrow">PHQ Studios</p>
+      <a class="wordmark" href="{{ url_for('overview') }}">Ghost Name Picker</a>
+    </div>
+    <div class="session">
+      {% if user %}
+      <p class="who">{{ user.email }}</p>
+      <form method="post" action="{{ url_for('logout') }}">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="text-button">Log out</button>
+      </form>
+      {% else %}
+      <a href="{{ url_for('login') }}">Log in</a>
+      {% endif %}
+    </div>
+  </header>
+  <main id="content" class="sheet">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flashes" role="status">
+      {% for message in messages %}
+      <p>{{ message }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  {% block scripts %}{% endblock %}
+</body>
+
+</html>

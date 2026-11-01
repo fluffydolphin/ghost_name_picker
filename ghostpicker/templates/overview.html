@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>The register</h1>
+{% if phantom %}
+<p class="banner">Your phantom name is {{ phantom }}.</p>
+{% elif user %}
+<p class="banner">You have not picked a phantom name yet.</p>
+{% else %}
+<p class="banner">Sign in, then take one ghost name. It stays yours.</p>
+{% endif %}
+<p class="actions">
+  <a class="button" href="{{ url_for('pick') }}">
+    {%- if user and user.ghost_name -%}
+    Change your current Phantom name
+    {%- else -%}
+    Get a Phantom name
+    {%- endif -%}
+  </a>
+</p>
+<h2 class="section-title">All ghost names</h2>
+<div class="registry">
+  {% for ghost in ghosts %}
+  <article
+    class="entry{% if ghost.owner_email %} taken{% endif %}{% if ghost.key.id() == current_name %} yours{% endif %}">
+    <h3>{{ ghost.key.id() }}</h3>
+    <div class="claim">
+      {% if ghost.owner_email %}
+      <p>{{ ghost.owner_email }}</p>
+      <p>{{ ghost.owner_first }} {{ ghost.owner_last }}</p>
+      {% else %}
+      <p class="quiet">Available</p>
+      {% endif %}
+      {% if ghost.description %}
+      <details>
+        <summary>Description</summary>
+        <p>{{ ghost.description }}</p>
+      </details>
+      {% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

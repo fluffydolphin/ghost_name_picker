@@ -1,0 +1,27 @@
+runtime: python312
+instance_class: F1
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 1
+
+entrypoint: gunicorn -b :$PORT -w 1 main:app
+
+handlers:
+- url: /static
+  static_dir: ghostpicker/static
+  secure: always
+  http_headers:
+    Strict-Transport-Security: "max-age=2592000; includeSubdomains"
+    X-Content-Type-Options: nosniff
+    X-Frame-Options: DENY
+
+- url: /.*
+  script: auto
+  secure: always
+
+#   SECRET_KEY
+#   GOOGLE_CLIENT_ID
+#   GOOGLE_CLIENT_SECRET
+env_variables:
+

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+<h1>Log in</h1>
+<p>Sign in before you choose or change a phantom name.</p>
+<p class="actions">
+  <a class="button" href="{{ url_for('login_google', next=next_path) }}">Sign in with Google</a>
+</p>
+{% endblock %}
