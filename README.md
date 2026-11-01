@@ -4,7 +4,7 @@ A Flask app on Google App Engine that gives each signed-in user a unique
 ghost name, shown as `First “Ghost” Last` (for example, Josua “Bogle”
 Pedersen). Built for the PHQ Studios Intermediate Backend Developer test.
 
-**Live app:**
+**Live app:** https://ghost-name-picker-513202.appspot.com/
 
 ## How it works
 
@@ -135,8 +135,8 @@ without a verified email are refused.
 ### Hosting
 
 App Engine standard environment, Python 3.12, F1 instances, scaling between
-0 and 1 instance to stay within the free tier. gunicorn runs two workers,
-Google's recommended number for an F1 instance.
+0 and 1 instance to stay within the free tier. The entrypoint runs gunicorn
+with one worker (`-w 1`).
 
 ## Technology used
 
@@ -248,8 +248,12 @@ startup, so they need network access and valid credentials in `.env`.
 - **Full scans.** The overview and each draw read every `Ghost`. That is fine
   for 43 names, but a large catalog would need paging, a query for unclaimed
   names, or a cache.
-- **Secrets in `app.yaml`.** Deploying relies on not committing the filled-in
-  file. Secret Manager would be safer.
+- **Secrets are injected at deploy time.** The committed `app.yaml` has an
+  empty `env_variables` block. GitHub Actions appends `SECRET_KEY`,
+  `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` from GitHub Secrets before
+  `gcloud app deploy`. Those values still live in the deployed App Engine
+  configuration. Secret Manager would keep them out of that file.
 - **No rate limiting** on drawing or claiming names.
-- **No continuous integration.** A pipeline that runs the tests and Google
-  style linters on every push would catch problems earlier.
+- **Tests are not part of CI.** A push to `main` deploys through
+  `.github/workflows/deploy.yaml`. That workflow does not run pytest or the
+  Google style linters, so a failing test can still be deployed.
